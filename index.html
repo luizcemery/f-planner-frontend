@@ -19,17 +19,35 @@
   <pre id="output"></pre>
 
   <script>
+    const BACKEND_URL = "https://f-planner-backend.onrender.com"
+    
     async function send() {
-      const prompt = document.getElementById("prompt").value
-      const res = await fetch(
-        "https://f-planner-backend.onrender.com/ask?prompt=" +
-          encodeURIComponent(prompt)
-      )
-
-      const data = await res.json()
-      document.getElementById("output").innerText =
-        data.response || data.error || "Erro ao obter resposta"
+      const prompt = document.getElementById("prompt").value.trim()
+      const output = document.getElementById("output")
+    
+      if (!prompt) {
+        output.innerText = "Digite uma pergunta primeiro."
+        return
+      }
+    
+      output.innerText = "Pensando..."
+    
+      try {
+        const controller = new AbortController()
+        setTimeout(() => controller.abort(), 30000) // 30s timeout
+    
+        const res = await fetch(
+          `${BACKEND_URL}/ask?prompt=` + encodeURIComponent(prompt),
+          { signal: controller.signal }
+        )
+    
+        const data = await res.json()
+        output.innerText = data.response || data.error || "Resposta vazia do servidor"
+      } catch (err) {
+        output.innerText = "Servidor indisponível ou demorou para responder"
+        console.error(err)
+      }
     }
-  </script>
+    </script>    
 </body>
 </html>
