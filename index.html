@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>F-Planner AI</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; }
+    input, button { padding: 10px; font-size: 16px; }
+    button { cursor: pointer; }
+    pre { background: #f4f4f4; padding: 10px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>F-Planner AI</h1>
+
+  <input id="prompt" placeholder="Digite sua pergunta" size="40" />
+  <button onclick="send()">Enviar</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    async function send() {
+      const prompt = document.getElementById("prompt").value
+      const res = await fetch(
+        "https://f-planner-backend.onrender.com/ask?prompt=" +
+          encodeURIComponent(prompt)
+      )
+
+      const data = await res.json()
+      document.getElementById("output").innerText =
+        data.response || data.error || "Erro ao obter resposta"
+    }
+  </script>
+</body>
+</html>
